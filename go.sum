@@ -1,3 +1,5 @@
+github.com/fatih/vim-go-tutorial v0.0.0-20181010233933-3f8bbd5f5e07 h1:u17X3LNnP6pPS29Yo+eth+hjph8GL2UMSvrUUK79uKk=
+github.com/fatih/vim-go-tutorial v0.0.0-20181010233933-3f8bbd5f5e07/go.mod h1:oa6JD/5IICE+xJoCq86PlDelkA17uQrqAuEsth1dbLQ=
 github.com/yuin/goldmark v1.4.13 h1:fVcFKWvrslecOb/tg+Cc05dkeYx540o0FuFt3nUVDoE=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 golang.org/x/mod v0.18.0 h1:5+9lSbEzPSdWkH32vYPBwEpX8KwDbM52Ud9xBUvNlb0=
