@@ -1,7 +1,10 @@
 package main
 
 
-import "testing"
+import (
+  "testing"
+  "slices"
+)
 
 
 func TestSum(t *testing.T) {
@@ -12,5 +15,36 @@ func TestSum(t *testing.T) {
     if got != want {
       t.Errorf("got %d want %d given, %v", got, want, numbers)
     }
+  })
+}
+
+
+func TestSumAll(t *testing.T) {
+  got := SumAll([]int{1, 2, 3}, []int{4, 5, 6})
+  want := []int{6, 15}
+  if !slices.Equal(got, want) {
+    t.Errorf("got: %v, want: %v", got, want)
+  }
+}
+
+
+func TestSumAllTails(t *testing.T) {
+  checkSums := func(t testing.TB, got, want []int) {
+    t.Helper()
+    if !slices.Equal(got, want) {
+      t.Errorf("got: %v, want: %v", got, want)
+    }
+  }
+
+  t.Run("non-empty arrs", func(t *testing.T) {
+    got := SumAllTails([]int{1, 2, 3}, []int{4, 5, 6})
+    want := []int{5, 11}
+    checkSums(t, got, want)
+  })
+
+  t.Run("empty arrs", func(t *testing.T) {
+    got := SumAllTails([]int{}, []int{})
+    want := []int{0, 0}
+    checkSums(t, got, want)
   })
 }
