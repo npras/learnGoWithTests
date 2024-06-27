@@ -26,10 +26,10 @@ func BenchmarkRepeater(b *testing.B) {
   for range b.N { Repeater("sally", 1000) }
 }
 
+
 func BenchmarkRepeater2(b *testing.B) {
   for range b.N { Repeater2("sally", 1000) }
 }
-
 
 
 func ExampleRepeater() {
