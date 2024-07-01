@@ -1,45 +1,38 @@
 package main
 
-
 import (
-  "io"
-  "fmt"
-  "os"
-  "time"
+	"fmt"
+	"io"
+	"os"
+	"time"
 )
-
 
 const (
-  finalWord = "Go!"
-  countdownStart = 3
+	finalWord      = "Go!"
+	countdownStart = 3
 )
 
-
 type Sleeper interface {
-  Sleep()
+	Sleep()
 }
-
 
 func Countdown(out io.Writer, sleeper Sleeper) {
-  for i := countdownStart; i > 0; i-- {
-    fmt.Fprintln(out, i)
-    sleeper.Sleep()
-  }
-  fmt.Fprint(out, finalWord)
+	for i := countdownStart; i > 0; i-- {
+		fmt.Fprintln(out, i)
+		sleeper.Sleep()
+	}
+	fmt.Fprint(out, finalWord)
 }
-
 
 //
 
-type DefaultSleeper struct {}
-
+type DefaultSleeper struct{}
 
 func (s *DefaultSleeper) Sleep() {
-  time.Sleep(1 * time.Second)
+	time.Sleep(1 * time.Second)
 }
 
-
 func main() {
-  sleeper := &DefaultSleeper{}
-  Countdown(os.Stdout, sleeper)
+	sleeper := &DefaultSleeper{}
+	Countdown(os.Stdout, sleeper)
 }
