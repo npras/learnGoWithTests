@@ -31,6 +31,7 @@ func TestGETPlayers(t *testing.T) {
 		srv.ServeHTTP(respWriter, req)
 
 		assertResponseBody(t, respWriter.Body.String(), "20")
+		assertResponseCode(t, respWriter.Code, http.StatusOK)
 	})
 
 	t.Run("returns  Kyle's score", func(t *testing.T) {
@@ -40,6 +41,7 @@ func TestGETPlayers(t *testing.T) {
 		srv.ServeHTTP(respWriter, req)
 
 		assertResponseBody(t, respWriter.Body.String(), "27")
+		assertResponseCode(t, respWriter.Code, http.StatusOK)
 	})
 
 	t.Run("returns  404 on missing players", func(t *testing.T) {
@@ -48,10 +50,7 @@ func TestGETPlayers(t *testing.T) {
 
 		srv.ServeHTTP(respWriter, req)
 
-		got := respWriter.Code
-		want := http.StatusNotFound
-
-		assertResponseCode(t, got, want)
+		assertResponseCode(t, respWriter.Code, http.StatusNotFound)
 	})
 }
 
