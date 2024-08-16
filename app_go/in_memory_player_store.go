@@ -16,3 +16,7 @@ func (s *InMemoryPlayerStore) GetPlayerScore(player string) int {
 func (s *InMemoryPlayerStore) RecordWin(player string) {
 	s.scores[player] += 1
 }
+
+func (st *InMemoryPlayerStore) GetLeague() []Player {
+	return nil
+}

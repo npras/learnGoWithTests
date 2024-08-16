@@ -1,41 +1,45 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
 )
 
+const jsonContentType = "application/json"
+
 type PlayerStore interface {
 	GetPlayerScore(name string) int
 	RecordWin(name string)
+	GetLeague() []Player
+}
+
+type Player struct {
+	Name string
+	Wins int
 }
 
 //
 
 type PlayerServer struct {
-	store  PlayerStore
-	router *http.ServeMux
+	store PlayerStore
+	http.Handler
 }
 
 func NewPlayerServer(store PlayerStore) *PlayerServer {
-	ps := &PlayerServer{
-		store:  store,
-		router: http.NewServeMux(),
-	}
-
-	ps.router.Handle("/league", http.HandlerFunc(ps.leagueHandler))
-	ps.router.Handle("/players/", http.HandlerFunc(ps.playersHandler))
-
+	ps := new(PlayerServer)
+	ps.store = store
+	router := http.NewServeMux()
+	router.Handle("/league", http.HandlerFunc(ps.leagueHandler))
+	router.Handle("/players/", http.HandlerFunc(ps.playersHandler))
+	ps.Handler = router
 	return ps
 }
 
-func (ps *PlayerServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ps.router.ServeHTTP(w, r)
-}
-
 func (ps *PlayerServer) leagueHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
+	w.Header().Set("content-type", jsonContentType)
+	json.NewEncoder(w).Encode(ps.store.GetLeague())
 }
 
 func (ps *PlayerServer) playersHandler(w http.ResponseWriter, r *http.Request) {
