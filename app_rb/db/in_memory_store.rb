@@ -7,9 +7,7 @@ module Db
       @h = h
     end
 
-    def get_player_score name
-      h[name]
-    end
+    def get_player_score(name) = h[name]
 
     def record_win name
       if h.key? name

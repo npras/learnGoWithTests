@@ -1,5 +1,5 @@
 require 'sinatra/base'
-require_relative './db/in_memory_store'
+require './db/in_memory_store.rb'
 
 class PlayerServer < Sinatra::Base
 
@@ -14,6 +14,11 @@ class PlayerServer < Sinatra::Base
     else
       status 404
     end
+  end
+
+  get '/league' do
+    headers "Content-Type" => "application/json"
+    status 200
   end
 
   post '/players/:name' do |name|
