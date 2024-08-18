@@ -8,8 +8,8 @@ module Db
       @win_calls = []
     end
 
-    def get_player_score(name) = h[name]
-    def record_win(name) = win_calls << name
     def get_league = h
+    def record_win(name) = win_calls << name
+    def get_player_score(name) = h[name]
   end
 end

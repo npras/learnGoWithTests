@@ -7,6 +7,7 @@ module Db
       @h = h
     end
 
+    def get_league = h
     def get_player_score(name) = h[name]
 
     def record_win name
@@ -17,6 +18,5 @@ module Db
       end
     end
 
-    def get_league = h
   end
 end

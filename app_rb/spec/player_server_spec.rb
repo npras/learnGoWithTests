@@ -15,10 +15,8 @@ describe PlayerServer do
 
   describe "GET_player_score" do
     before do
-      h = {
-        "pepper" => 20,
-        "kyle" => 27,
-      }
+      h = { "pepper" => 20,
+            "kyle" => 27, }
       app.set :store, Db::InMemoryStore.new(h)
     end
 
@@ -42,11 +40,8 @@ describe PlayerServer do
 
 
   describe "POST_record_win" do
-    before do
-      app.set :store, Db::StubMemoryStore.new
-    end
-
     it "calls record_win each time" do
+      app.set :store, Db::StubMemoryStore.new
       name = 'pepperx'
       assert_nil store.get_player_score(name)
       assert_equal 0, store.win_calls.size
@@ -60,11 +55,9 @@ describe PlayerServer do
 
   describe "GET_league" do
     it "returns league table as JSON" do
-      want = {
-        "Cleo" => 32,
-        "Chris" => 20,
-        "Tiest" => 14,
-      }
+      want = { "Cleo" => 32,
+               "Chris" => 20,
+               "Tiest" => 14, }
       app.set :store, Db::StubMemoryStore.new(want)
       get '/league'
       assert last_response.ok?
