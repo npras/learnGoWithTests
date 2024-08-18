@@ -115,6 +115,8 @@ func TestLeague(t *testing.T) {
 		srv.ServeHTTP(resp, req)
 
 		got := getLeagueFromResponse(t, resp.Body)
+		fmt.Println("=============")
+		fmt.Println(json.MarshalIndent(wantedLeague, "", "		"))
 		assertResponseCode(t, resp.Code, http.StatusOK)
 		assertLeague(t, got, wantedLeague)
 		assertContentType(t, resp, jsonContentType)

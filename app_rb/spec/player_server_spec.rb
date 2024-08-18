@@ -3,6 +3,7 @@ ENV['APP_ENV'] = 'test'
 require 'minitest/autorun'
 require 'rack/test'
 require './player_server.rb'
+require './db/stub_memory_store.rb'
 
 describe PlayerServer do
 
@@ -67,27 +68,25 @@ describe PlayerServer do
       app.set :store, Db::StubMemoryStore.new(want)
       get '/league'
       assert last_response.ok?
-      assert_equal 'application/json', last_response.headers['content-type']
+      assert_equal 'application/json', last_response.content_type
       got = JSON.parse last_response.body
       assert_equal want, got
     end
   end
 
-end
 
-
-module Db
-  class StubMemoryStore
-
-    attr_accessor :h, :win_calls
-
-    def initialize(h = {})
-      @h = h
-      @win_calls = []
+  describe "integration" do
+    it "works together" do
+      app.set :store, Db::InMemoryStore.new
+      name = 'pepperx'
+      assert_nil store.get_player_score(name)
+      7.times { post "/players/#{name}" }
+      get '/league'
+      assert last_response.ok?
+      assert_equal 'application/json', last_response.content_type
+      got = JSON.parse last_response.body
+      assert_equal ({name => 7}), got
     end
-
-    def get_player_score(name) = h[name]
-    def record_win(name) = win_calls << name
-
   end
+
 end

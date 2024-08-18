@@ -17,5 +17,6 @@ module Db
       end
     end
 
+    def get_league = h
   end
 end

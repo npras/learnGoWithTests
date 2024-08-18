@@ -10,15 +10,16 @@ class PlayerServer < Sinatra::Base
   get '/players/:name' do |name|
     score = settings.store.get_player_score name
     if score
-      [200, score.to_s]
+      body score.to_s
     else
       status 404
     end
   end
 
   get '/league' do
-    headers "Content-Type" => "application/json"
-    status 200
+    league_h = settings.store.get_league
+    content_type :json
+    league_h.to_json
   end
 
   post '/players/:name' do |name|

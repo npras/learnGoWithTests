@@ -7,4 +7,3 @@ gem "rackup"
 gem "puma"
 
 gem 'rack-test', '~> 2.1'
-dd
