@@ -1,7 +1,6 @@
 package player
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -27,8 +26,8 @@ func TestGETPlayers(t *testing.T) {
 
 		srv.ServeHTTP(respWriter, req)
 
-		assertResponseCode(t, respWriter.Code, http.StatusOK)
-		assertResponseBody(t, respWriter.Body.String(), "20")
+		assertInt(t, respWriter.Code, http.StatusOK)
+		assertString(t, respWriter.Body.String(), "20")
 	})
 
 	t.Run("returns  Kyle's score", func(t *testing.T) {
@@ -37,8 +36,8 @@ func TestGETPlayers(t *testing.T) {
 
 		srv.ServeHTTP(respWriter, req)
 
-		assertResponseCode(t, respWriter.Code, http.StatusOK)
-		assertResponseBody(t, respWriter.Body.String(), "27")
+		assertInt(t, respWriter.Code, http.StatusOK)
+		assertString(t, respWriter.Body.String(), "27")
 	})
 
 	t.Run("returns  404 on missing players", func(t *testing.T) {
@@ -47,8 +46,8 @@ func TestGETPlayers(t *testing.T) {
 
 		srv.ServeHTTP(respWriter, req)
 
-		assertResponseCode(t, respWriter.Code, http.StatusNotFound)
-		assertResponseBody(t, respWriter.Body.String(), "")
+		assertInt(t, respWriter.Code, http.StatusNotFound)
+		assertString(t, respWriter.Body.String(), "")
 	})
 }
 
@@ -67,7 +66,7 @@ func TestStoreWins(t *testing.T) {
 
 		srv.ServeHTTP(respWriter, req)
 
-		assertResponseCode(t, respWriter.Code, http.StatusAccepted)
+		assertInt(t, respWriter.Code, http.StatusAccepted)
 
 		if got := len(store.winCalls); got != 1 {
 			t.Fatalf("got: %d, want: %d", got, 1)
@@ -94,7 +93,7 @@ func TestLeague(t *testing.T) {
 		srv.ServeHTTP(resp, req)
 
 		got := getLeagueFromResponse(t, resp.Body)
-		assertResponseCode(t, resp.Code, http.StatusOK)
+		assertInt(t, resp.Code, http.StatusOK)
 		assertLeague(t, got, wantedLeague)
 		assertContentType(t, resp, jsonContentType)
 	})
@@ -119,9 +118,7 @@ func newGetScoreRequest(name string) *http.Request {
 
 func getLeagueFromResponse(t testing.TB, body io.Reader) []Player {
 	t.Helper()
-	var got []Player
-	err := json.NewDecoder(body).Decode(&got)
-
+	got, err := NewLeague(body)
 	if err != nil {
 		t.Fatalf("unable to parse resp_body: %q, err: '%v'", body, err)
 	}
@@ -130,14 +127,14 @@ func getLeagueFromResponse(t testing.TB, body io.Reader) []Player {
 
 // assert helpers
 
-func assertResponseCode(t testing.TB, got, want int) {
+func assertInt(t testing.TB, got, want int) {
 	t.Helper()
 	if got != want {
 		t.Errorf("got: %d, want: %d", got, want)
 	}
 }
 
-func assertResponseBody(t testing.TB, got, want string) {
+func assertString(t testing.TB, got, want string) {
 	t.Helper()
 	if got != want {
 		t.Errorf("got: %q, want: %q", got, want)
