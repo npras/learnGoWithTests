@@ -1,4 +1,4 @@
-package main
+package player
 
 import (
 	"encoding/json"
@@ -9,27 +9,6 @@ import (
 	"reflect"
 	"testing"
 )
-
-// stubs and spys
-
-type StubPlayerStore struct {
-	scores   map[string]int
-	winCalls []string
-	league   []Player
-}
-
-func (st *StubPlayerStore) GetPlayerScore(player string) int {
-	score := st.scores[player]
-	return score
-}
-
-func (st *StubPlayerStore) RecordWin(player string) {
-	st.winCalls = append(st.winCalls, player)
-}
-
-func (st *StubPlayerStore) GetLeague() []Player {
-	return st.league
-}
 
 // test cases
 
@@ -115,8 +94,6 @@ func TestLeague(t *testing.T) {
 		srv.ServeHTTP(resp, req)
 
 		got := getLeagueFromResponse(t, resp.Body)
-		fmt.Println("=============")
-		fmt.Println(json.MarshalIndent(wantedLeague, "", "		"))
 		assertResponseCode(t, resp.Code, http.StatusOK)
 		assertLeague(t, got, wantedLeague)
 		assertContentType(t, resp, jsonContentType)
@@ -151,7 +128,7 @@ func getLeagueFromResponse(t testing.TB, body io.Reader) []Player {
 	return got
 }
 
-// test helpers
+// assert helpers
 
 func assertResponseCode(t testing.TB, got, want int) {
 	t.Helper()

@@ -1,4 +1,4 @@
-package main
+package player
 
 type InMemoryPlayerStore struct {
 	scores map[string]int
