@@ -1,4 +1,4 @@
-package player
+package main
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ const jsonContentType = "application/json"
 type PlayerStore interface {
 	GetPlayerScore(name string) int
 	RecordWin(name string)
-	GetLeague() []Player
+	GetLeague() League
 }
 
 // Player stores a name with a number of wins

@@ -1,19 +1,22 @@
-package player
+package main
 
 import (
-	"strings"
+	"os"
 	"testing"
 )
 
 func TestFileSystemStore(t *testing.T) {
 
-	t.Run("#GetLeague", func(t *testing.T) {
-		database := strings.NewReader(`[{"Name": "Cleo", "Wins": 10},{"Name": "Chris", "Wins": 32}]`)
-		store := FileSystemStore{database: database}
+	t.Run("#GetLeague_is_sorted", func(t *testing.T) {
+		dataFile, removeFileFn := createTempFile(t, `[
+			{"Name": "Cleo", "Wins": 10},
+			{"Name": "Chris", "Wins": 32}]`)
+		defer removeFileFn()
+		store, _ := NewFileSystemStore(dataFile)
 		got := store.GetLeague()
 		want := []Player{
-			{"Cleo", 10},
 			{"Chris", 32},
+			{"Cleo", 10},
 		}
 		assertLeague(t, got, want)
 		// re-reading to test the seeker
@@ -22,20 +25,65 @@ func TestFileSystemStore(t *testing.T) {
 	})
 
 	t.Run("#GetPlayerScore", func(t *testing.T) {
-		database := strings.NewReader(`[{"Name": "Cleo", "Wins": 10},{"Name": "Chris", "Wins": 32}]`)
-		store := FileSystemStore{database: database}
+		dataFile, removeFileFn := createTempFile(t, `[
+			{"Name": "Cleo", "Wins": 10},
+			{"Name": "Chris", "Wins": 32}]`)
+		defer removeFileFn()
+		store, _ := NewFileSystemStore(dataFile)
 		got := store.GetPlayerScore("Chris")
 		assertInt(t, got, 32)
 	})
 
-	t.Run("#RecordWin", func(t *testing.T) {
-		database := strings.NewReader(`[{"Name": "Cleo", "Wins": 10},{"Name": "Chris", "Wins": 30}]`)
-		store := FileSystemStore{database: database}
-		store.RecordWin("Chris")
+	t.Run("#RecordWin_existing_player", func(t *testing.T) {
+		dataFile, removeFileFn := createTempFile(t, `[
+			{"Name": "Cleo", "Wins": 10},
+			{"Name": "Chris", "Wins": 30}]`)
+		defer removeFileFn()
+		store, _ := NewFileSystemStore(dataFile)
 		store.RecordWin("Chris")
 		store.RecordWin("Chris")
 		got := store.GetPlayerScore("Chris")
-		assertInt(t, got, 33)
+		assertInt(t, got, 32)
 	})
 
+	t.Run("#RecordWin_new_player", func(t *testing.T) {
+		dataFile, removeFileFn := createTempFile(t, `[
+			{"Name": "Cleo", "Wins": 10},
+			{"Name": "Chris", "Wins": 30}]`)
+		defer removeFileFn()
+		store, _ := NewFileSystemStore(dataFile)
+		store.RecordWin("Leo")
+		assertInt(t, store.GetPlayerScore("Leo"), 1)
+		want := []Player{
+			{"Chris", 30},
+			{"Cleo", 10},
+			{"Leo", 1},
+		}
+		assertLeague(t, store.GetLeague(), want)
+	})
+
+}
+
+// assertions
+
+func assertNoError(t testing.TB, err error) {
+	t.Helper()
+	if err != nil {
+		t.Fatalf("didn't expect an error but got one: %v", err)
+	}
+}
+
+// helpers
+func createTempFile(t testing.TB, initialData string) (*os.File, func()) {
+	t.Helper()
+	tempfile, err := os.CreateTemp("", "db")
+	if err != nil {
+		t.Fatalf("couldn't create tmp file. error: %v", err)
+	}
+	tempfile.Write([]byte(initialData))
+	removeFileFn := func() {
+		tempfile.Close()
+		os.Remove(tempfile.Name())
+	}
+	return tempfile, removeFileFn
 }

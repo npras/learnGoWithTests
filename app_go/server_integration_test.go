@@ -1,4 +1,4 @@
-package player
+package main
 
 import (
 	"net/http"
@@ -7,7 +7,17 @@ import (
 )
 
 func TestRecordingWinsAndRetrievingThem(t *testing.T) {
-	store := NewInMemoryPlayerStore()
+	t.Run("works with an empty file", func(t *testing.T) {
+		dataFile, removeFileFn := createTempFile(t, "")
+		defer removeFileFn()
+		_, err := NewFileSystemStore(dataFile)
+		assertNoError(t, err)
+	})
+
+	dataFile, removeFileFn := createTempFile(t, "[]")
+	defer removeFileFn()
+	store, err := NewFileSystemStore(dataFile)
+	assertNoError(t, err)
 	srv := NewPlayerServer(store)
 	name := "pepper"
 

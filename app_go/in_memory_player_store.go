@@ -1,4 +1,4 @@
-package player
+package main
 
 type InMemoryPlayerStore struct {
 	scores map[string]int
@@ -17,8 +17,8 @@ func (s *InMemoryPlayerStore) RecordWin(player string) {
 	s.scores[player] += 1
 }
 
-func (st *InMemoryPlayerStore) GetLeague() []Player {
-	var players []Player
+func (st *InMemoryPlayerStore) GetLeague() League {
+	var players League
 	for k, v := range st.scores {
 		player := Player{Name: k, Wins: v}
 		players = append(players, player)
