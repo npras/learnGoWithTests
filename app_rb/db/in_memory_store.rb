@@ -1,5 +1,7 @@
+require './db/store.rb'
+
 module Db
-  class InMemoryStore
+  class InMemoryStore < Store
 
     attr_accessor :h
 

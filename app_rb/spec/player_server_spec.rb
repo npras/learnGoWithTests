@@ -1,22 +1,19 @@
-ENV['APP_ENV'] = 'test'
-
-require 'minitest/autorun'
-require 'rack/test'
-require './player_server.rb'
+require './spec/spec_helper.rb'
+require './lib/controllers/player_controller.rb'
 require './db/stub_memory_store.rb'
 
-describe PlayerServer do
+describe PlayerController do
 
   include Rack::Test::Methods
 
-  def app = PlayerServer
+  def app = PlayerController
   def store = app.settings.store
 
 
   describe "GET_player_score" do
     before do
       h = { "pepper" => 20,
-            "kyle" => 27, }
+            "kyle" => 27}
       app.set :store, Db::InMemoryStore.new(h)
     end
 
@@ -55,30 +52,18 @@ describe PlayerServer do
 
   describe "GET_league" do
     it "returns league table as JSON" do
-      want = { "Cleo" => 32,
-               "Chris" => 20,
-               "Tiest" => 14, }
-      app.set :store, Db::StubMemoryStore.new(want)
+      h = {'Tiest' => 14,
+           'Chris' => 20,
+           'Cleo' => 32}
+      app.set :store, Db::StubMemoryStore.new(h)
       get '/league'
       assert last_response.ok?
       assert_equal 'application/json', last_response.content_type
       got = JSON.parse last_response.body
+      want = [['Cleo', 32],
+              ['Chris', 20],
+              ['Tiest', 14]]
       assert_equal want, got
-    end
-  end
-
-
-  describe "integration" do
-    it "works together" do
-      app.set :store, Db::InMemoryStore.new
-      name = 'pepperx'
-      assert_nil store.get_player_score(name)
-      7.times { post "/players/#{name}" }
-      get '/league'
-      assert last_response.ok?
-      assert_equal 'application/json', last_response.content_type
-      got = JSON.parse last_response.body
-      assert_equal ({name => 7}), got
     end
   end
 

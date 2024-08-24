@@ -1,10 +1,13 @@
 require 'sinatra/base'
-require './db/in_memory_store.rb'
+require './db/file_system_store.rb'
 
-class PlayerServer < Sinatra::Base
+class PlayerController < Sinatra::Base
 
   configure do
-    set :store, Db::InMemoryStore.new
+    set :filename, 'game.db.json'
+    set :data_file, File.new(settings.filename, File::RDWR|File::CREAT, 0666)
+    #set :store, Db::InMemoryStore.new
+    set :store, Db::FileSystemStore.new(data_file)
   end
 
   get '/players/:name' do |name|
