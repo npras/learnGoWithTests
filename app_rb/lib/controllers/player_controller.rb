@@ -6,7 +6,6 @@ class PlayerController < Sinatra::Base
   configure do
     set :filename, 'game.db.json'
     set :data_file, File.new(settings.filename, File::RDWR|File::CREAT, 0666)
-    #set :store, Db::InMemoryStore.new
     set :store, Db::FileSystemStore.new(data_file)
   end
 
@@ -24,6 +23,11 @@ class PlayerController < Sinatra::Base
   post '/players/:name' do |name|
     settings.store.record_win name
     status 201
+  end
+
+  delete '/players/:name' do |name|
+    settings.store.remove_player name
+    status 200
   end
 
 end

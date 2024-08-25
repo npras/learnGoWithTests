@@ -1,6 +1,7 @@
 require './spec/spec_helper.rb'
 require './lib/controllers/player_controller.rb'
 require './db/stub_memory_store.rb'
+require './db/in_memory_store.rb'
 
 describe PlayerController do
 
@@ -49,13 +50,27 @@ describe PlayerController do
     end
   end
 
+  describe "DELETE_player" do
+    it "deletes a player by name" do
+      h = { "pepper" => 20,
+            "kyle" => 27}
+      store = Db::InMemoryStore.new(h)
+      app.set :store, store
+      assert_equal 20, store.get_player_score('pepper')
+      delete '/players/pepper'
+      assert last_response.ok?
+      assert_nil store.get_player_score('pepper')
+      assert_equal 27, store.get_player_score('kyle')
+    end
+  end
+
 
   describe "GET_league" do
     it "returns league table as JSON" do
       h = {'Tiest' => 14,
            'Chris' => 20,
            'Cleo' => 32}
-      app.set :store, Db::StubMemoryStore.new(h)
+      app.set :store, Db::InMemoryStore.new(h)
       get '/league'
       assert last_response.ok?
       assert_equal 'application/json', last_response.content_type

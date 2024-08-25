@@ -18,6 +18,12 @@ module Db
       sorted.map { [ _1['Name'], _1['Wins'] ] }
     end
 
+    def get_player_score name
+      idx = get_player_idx name
+      return nil unless idx
+      data.dig idx, 'Wins'
+    end
+
     def record_win(name)
       if idx = get_player_idx(name)
         data[idx]['Wins'] += 1
@@ -27,18 +33,22 @@ module Db
       write_file
     end
 
-    def get_player_score name
+    def remove_player name
       idx = get_player_idx name
       return nil unless idx
-      data.dig(idx, 'Wins')
+      data.delete_at idx
+      write_file
     end
 
     private def read_file(file) = JSON.load(file)
     private def get_player_idx(name) = data.find_index { _1['Name'] == name }
 
     private def write_file
-      file.rewind
-      JSON.dump data, file
+      File.open(File.basename(file), 'w') do |f|
+        f.truncate 0
+        f.rewind
+        JSON.dump data, f
+      end
     end
 
   end
