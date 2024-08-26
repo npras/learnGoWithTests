@@ -13,6 +13,7 @@ const jsonContentType = "application/json"
 type PlayerStore interface {
 	GetPlayerScore(name string) int
 	RecordWin(name string)
+	RemovePlayer(name string)
 	GetLeague() League
 }
 
@@ -55,6 +56,8 @@ func (ps *PlayerServer) playersHandler(w http.ResponseWriter, r *http.Request) {
 		ps.showScore(w, player)
 	case http.MethodPost:
 		ps.processWin(w, player)
+	case http.MethodDelete:
+		ps.processRemove(w, player)
 	}
 }
 
@@ -71,5 +74,11 @@ func (ps *PlayerServer) showScore(w http.ResponseWriter, name string) {
 // processWin
 func (ps *PlayerServer) processWin(w http.ResponseWriter, name string) {
 	ps.store.RecordWin(name)
+	w.WriteHeader(http.StatusAccepted)
+}
+
+// processRemove
+func (ps *PlayerServer) processRemove(w http.ResponseWriter, name string) {
+	ps.store.RemovePlayer(name)
 	w.WriteHeader(http.StatusAccepted)
 }

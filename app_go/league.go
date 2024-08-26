@@ -16,13 +16,13 @@ func (l League) Sort() League {
 	return l
 }
 
-func (l League) Find(name string) *Player {
+func (l League) Find(name string) (*Player, int) {
 	for i, player := range l {
 		if player.Name == name {
-			return &l[i]
+			return &l[i], i
 		}
 	}
-	return nil
+	return nil, 0
 }
 
 // NewLeague

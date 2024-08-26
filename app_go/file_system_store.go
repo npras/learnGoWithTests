@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 )
 
 type FileSystemStore struct {
@@ -34,15 +35,23 @@ func NewFileSystemStore(f *os.File) (*FileSystemStore, error) {
 // methods
 
 func (s *FileSystemStore) GetPlayerScore(name string) int {
-	player := s.league.Find(name)
+	player, _ := s.league.Find(name)
 	if player != nil {
 		return player.Wins
 	}
 	return 0
 }
 
+func (s *FileSystemStore) RemovePlayer(name string) {
+	player, idx := s.league.Find(name)
+	if player != nil {
+		s.league = slices.Delete(s.league, idx, idx+1)
+	}
+	s.db.Encode(s.league)
+}
+
 func (s *FileSystemStore) RecordWin(name string) {
-	player := s.league.Find(name)
+	player, _ := s.league.Find(name)
 	if player == nil {
 		s.league = append(s.league, Player{name, 1})
 	} else {
