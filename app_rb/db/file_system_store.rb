@@ -44,11 +44,9 @@ module Db
     private def get_player_idx(name) = data.find_index { _1['Name'] == name }
 
     private def write_file
-      File.open(File.basename(file), 'w') do |f|
-        f.truncate 0
-        f.rewind
-        JSON.dump data, f
-      end
+      file.truncate 0
+      file.rewind
+      JSON.dump data, file
     end
 
   end

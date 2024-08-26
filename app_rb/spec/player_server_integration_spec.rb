@@ -11,10 +11,8 @@ describe PlayerController do
 
   describe 'integration' do
     it 'works together' do
-      Tempfile.create('db-test') do |f|
-        f.write '[]'
-        app.set :store, Db::FileSystemStore.new(f)
-      end
+      f = Tempfile.new('db-test-integration').tap { _1.write '[]' }
+      app.set :store, Db::FileSystemStore.new(f)
 
       name1 = 'pepperx'
       name2 = 'kylex'
@@ -63,6 +61,9 @@ describe PlayerController do
       assert_equal 'application/json', last_response.content_type
       got = JSON.parse last_response.body
       assert_equal [[name3, 8], [name1, 7]], got
+
+      f.close
+      f.unlink
     end
   end
 
